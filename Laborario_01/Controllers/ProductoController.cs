@@ -20,7 +20,12 @@ namespace Laborario_01.Controllers
             var p = _sP.GetAllProduct();
             
             return View(p);
-        
+        }
+
+        public IActionResult Mantenimiento()
+        {
+
+            return PartialView("_Mantenimiento");
         }
 
     }
