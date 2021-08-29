@@ -1,0 +1,50 @@
+﻿@using Laborario_01.Models;
+@model List<TProducto>;
+
+<div class="row">
+    <div class="col-md-12">
+        <button class="btn btn-primary"><i class="fas fa-plus"></i> Agregar Producto</button>
+    </div>
+</div>
+<div class="row">
+
+    <div class="col-md-12">
+        <!-- Tabla de Listado de Productos -->
+
+        <h1>Listado de Productos </h1>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Categoria</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col">Descuento</th>
+                    <th scope="col" colspan="2">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model)
+                 {
+                    <tr>
+                        <td> @product.Nombre </td>
+                        <td> @product.Categoria </td>
+                        <td> @product.Precio </td>
+                        <td> @product.Descuento </td>
+                        <td>
+                            <button class="btn btn-success"><i class="fas fa-pencil-alt"></i></button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                 }
+            </tbody>
+        </table>
+
+
+
+
+
+    </div>
+
+</div>
