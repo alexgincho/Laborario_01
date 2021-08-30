@@ -18,15 +18,56 @@ namespace Laborario_01.Controllers
         public IActionResult Index()
         {
             var p = _sP.GetAllProduct();
-            
+
             return View(p);
         }
 
-        public IActionResult Mantenimiento()
+        public IActionResult Mantenimiento(int id = 0)
         {
+            TProducto producto = null;
 
-            return PartialView("_Mantenimiento");
+            if (id != 0) producto = _sP.GetOne(id);
+
+            ViewBag.lstCategoria = GetCategoria();
+
+            return PartialView("_Mantenimiento",producto ?? new TProducto());
         }
 
+        [HttpPost]
+        public JsonResult MantenimientoProducto([FromBody]TProducto producto)
+        {
+            TProducto product = null;
+            string error = "";
+            try
+            {
+                if(producto.PkEproducto != 0)
+                {
+                    // actualiza
+                    var update = _sP.GetOne(producto.PkEproducto);
+                    product = _sP.CreateProduct(update);
+                }
+                else
+                {
+                    product = _sP.CreateProduct(producto);
+                }
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message;
+            }
+            return Json(product);
+        }
+
+        public List<string> GetCategoria()
+        {
+            List<string> categoria = new List<string>();
+            categoria.Add("Accion");
+            categoria.Add("Arcade");
+            categoria.Add("Deportivo");
+            categoria.Add("Estrategia");
+            categoria.Add("Simulacion");
+
+            return categoria;
+        }
     }
 }

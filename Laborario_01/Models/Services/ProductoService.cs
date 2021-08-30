@@ -15,7 +15,8 @@ namespace Laborario_01.Models.Services
             {
                 using (var con = new Db_Context())
                 {
-
+                    objProduct = new TProducto();
+                    //objProduct.PkEproducto = producto.PkEproducto;
                     objProduct.Nombre = producto.Nombre;
                     objProduct.Categoria = producto.Categoria;
                     objProduct.Precio = producto.Precio;

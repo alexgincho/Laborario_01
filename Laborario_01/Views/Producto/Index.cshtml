@@ -14,6 +14,7 @@
         <!-- Tabla de Listado de Productos -->
 
         <h1>Listado de Productos </h1>
+        <div class="modal-container"></div>
         <table class="table">
             <thead class="thead-dark">
                 <tr>
@@ -33,10 +34,10 @@
                         <td> @product.Precio </td>
                         <td> @product.Descuento </td>
                         <td>
-                            <button class="btn btn-success"><i class="fas fa-pencil-alt"></i></button>
+                            <button class="btn btn-success" id="EditProducto" data-target="#staticBackdrop" value="@product.PkEproducto"><i class="fas fa-pencil-alt"></i></button>
                         </td>
                         <td>
-                            <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                            <button class="btn btn-danger" id="DeleteProducto" data-target="#staticBackdrop" value="@product.PkEproducto"><i class="fas fa-trash-alt"></i></button>
                         </td>
                     </tr>
                 }
@@ -47,6 +48,7 @@
 
 </div>
 
+
 @section Scripts{
 
     <script type="text/javascript">
@@ -54,37 +56,84 @@
         $(document).ready(function () {
 
             const btnAbrirModal = $("#btnAddProducto");
+            const btnEditProducto = $("#EditProducto");
+            const btnEditValue = $("#EditProducto").val();
+
+            console.log(btnEditProducto)
+            btnEditProducto.click(function (e) {
+                e.preventDefault();
+                InvocarModal(btnEditValue);
+            });
 
             btnAbrirModal.click(function (e) {
 
-                e.preventDefault();
-
+                e.preventDefault();           
+                InvocarModal();
+            });
+            function InvocarModal(id) {
+                AbrirModal(`/Producto/Mantenimiento/${id ? id : ""}`);
+            }
+            function AbrirModal(url) {
+             
                 $.ajax({
                     type: 'GET',
-                    url: '/Producto/Mantenimiento',
+                    url: url,
                     dataType: "html",
+                    cache: false,
                     success: function (data) {
 
-                        const $modal = $("<div class='parent'>").append(data);
-                        $modal.find(">.modal").on("hidden.bs.modal", function () {
-                            //if (onHiddenModal) onHiddenModal($(this));
-                            $(this).parent().remove();
+                        $('.modal-container').html(data).find('.modal').modal({
+                            show: true
                         });
-                        $modal.find(">.modal").modal("show");
-
-                        $("body").append($modal);
                     }
 
                 });
+            }
+            $(".modal-container").on("click", "#SaveProducto", function (e) {
 
+                let Producto = {
+                    "PkEproducto": $("#PkEproducto").val(),
+                    "Nombre": $("#Nombre").val(),
+                    "Categoria": $("#Categoria").val(),
+                    "Precio": $("#Precio").val(),
+                    "Descuento": $("#Descuento").val()
+                }
 
+                Swal.fire({
+                    title: 'Do you want to save the changes?',
+                    showDenyButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: `Save`,
+                    denyButtonText: `Don't save`,
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        $.ajax({
 
+                            url: '/Producto/MantenimientoProducto',
+                            data: JSON.stringify(Producto),
+                            type: 'POST',
+                            contentType: "application/json;charset=utf-8",
+                            dataType: "json",
+                            success: function (data) {
+                                Swal.fire('Saved!', '', 'success')
+                                $('#myModal').modal('hide');
+                            },
+                            error: function (error) {
+
+                            }
+
+                        });
+                        
+                    } else if (result.isDenied) {
+                        Swal.fire('Changes are not saved', '', 'info')
+                        $('#myModal').modal('hide');
+                    }
+                })
+                
+                
             });
-
-
-
-
-
+           
         });
 
 
